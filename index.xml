@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+ 	<channel>
+		<title>Home Page | Daniel Valfridsson</title>
+		<link>http://www.valfridsson.net/</link>
+		<description></description>
+		<language>sv</language>
+		<lastBuildDate>Sat, 14 Nov 2015 11:47:07 +0100</lastBuildDate>
+		<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+		<generator>Sandvox 2.10</generator>
+		<item>
+			<title>keybase.txt</title>
+			<link>http://www.valfridsson.net/keybase.txt</link>
+			<description>
+				
+			</description>
+			<pubDate>Sat, 14 Nov 2015 11:46:56 +0100</pubDate>
+			<guid>http://www.valfridsson.net/keybase.txt</guid>
+            
+			
+		</item>
+		<item>
+			<title>E4C4BE35.asc</title>
+			<link>http://www.valfridsson.net/e4c4be35.asc</link>
+			<description>
+				
+			</description>
+			<pubDate>Wed, 04 Jun 2014 21:16:12 +0200</pubDate>
+			<guid>http://www.valfridsson.net/e4c4be35.asc</guid>
+            
+			
+		</item>
+ 	</channel>
+</rss>
