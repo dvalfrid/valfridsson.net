@@ -12,6 +12,7 @@
 				<a class="site-section" href="{{ .RelPermalink }}">{{ .Title }}</a>
 			{{ end }}
 		{{ end }}
+		<div id="search" class="site-search"></div>
 	</header>
 	<main id="main">
 		{{ block "main" . }}{{ end }}
@@ -19,5 +20,10 @@
 	<footer class="site-footer">
 		<p>&copy; 2001 - {{ now.Year }} Daniel Valfridsson</p>
 	</footer>
+	<script>
+		window.addEventListener("DOMContentLoaded", function () {
+			new PagefindUI({ element: "#search", showSubResults: true, showImages: false });
+		});
+	</script>
 </body>
 </html>

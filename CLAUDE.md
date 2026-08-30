@@ -97,7 +97,18 @@ content ever needs re-deriving from the original source.
 - **Pagefind search** — `npx --yes pagefind --site public` after the
   Hugo build, wired into CI. Worth keeping given the volume of photos
   and long-form prose (diaries, autobiographies, exhibition histories)
-  across all four sites.
+  across all four sites. A visible search box (Pagefind's Default UI,
+  `pagefind-ui.js`/`.css`, referenced as plain static paths under
+  `/pagefind/` in `layouts/partials/head.html`) sits in the header on
+  every page (`#search` in `layouts/_default/baseof.html`, initialized
+  via `new PagefindUI(...)`) — Pagefind confirms the Default UI
+  "is supported and will continue to work" even though their docs now
+  point new integrations at a newer Component UI instead; no reason to
+  take on that extra complexity here. **Caveat**: `hugo server -D`
+  does *not* run the Pagefind indexing step, so the search box 404s on
+  its JS/CSS during normal local dev — to test it locally, run
+  `hugo --minify && npx --yes pagefind --site public` and serve
+  `public/` with a static file server instead.
 
 ## Known migration decisions (don't reintroduce without re-checking)
 
