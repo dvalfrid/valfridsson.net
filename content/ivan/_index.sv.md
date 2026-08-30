@@ -19,9 +19,8 @@ På följande sätt kan Du enkelt nå oss:
 Skapades 1 januari 1997
 
 ## Länkar
-- [Hhaningekonstnarer](http://www.haningekonstnarer.se/konst/bmolankar.php)
+- [Haningekonstnarer](http://www.haningekonstnarer.se/konst/bmolankar.php)
 - [Masten Socialt Center Tyresö](/masten/)
-- [Darash](http://www.shalom.se/aldre/Darash/index)
 - [Shalom](http://www.shalom.se/)
 - [Cina Jeppsson](/cina/)
 - [Pingstkyrkan Tyresö](http://www.tyresopingst.se/)
