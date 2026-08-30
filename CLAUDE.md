@@ -14,9 +14,12 @@ FrontPage-era HTML:
 
 The legacy static HTML export (root `index.html`, `cina/`, `ivan/`,
 `ivan-old/`, `masten/`, `sandvox_*` theme dirs, `_Resources/`,
-`ErrorDoc/`) still lives in the repo during migration as source material
-for `scripts/migrate_photos/` — it is not served by Hugo and is removed
-once migration is complete and verified.
+`ErrorDoc/`) that served as source material for `scripts/migrate_photos/`
+has been removed from the working tree now that migration is complete
+and the Hugo site is live — it's still recoverable from git history if
+a script or a piece of content needs re-deriving from the original
+source, but `scripts/migrate_photos/` itself won't run against a fresh
+checkout without restoring it first.
 
 ## Machine setup
 
