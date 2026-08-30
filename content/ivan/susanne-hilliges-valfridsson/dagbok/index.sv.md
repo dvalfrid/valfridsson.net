@@ -390,7 +390,7 @@ Efter gudstjänsten bjöds alla närvarande ner i församlingsvåningen till en 
 
 Under minnesstunden inkom gåvor till Lettlandshjälpen på över 5.000 kr. Därtill kommer de gåvor som insätts på postgirokontot 88 25 36-6, som ännu ej redovisats. Vi är mycket tacksamma för detta.
 
-En serie fotografier från begravningen och minnesstunden i Pingstkyrkan Tyresö finns inlagda [här](http://valfridsson.net/ivan/foto07.htm).
+En serie fotografier från begravningen och minnesstunden i Pingstkyrkan Tyresö finns inlagda [här](/ivan-old/album/2000-begravningsgudstjanst-och-minneshogtid-for-susanne-den-1-maj-2000/).
 
 **2000-05-02**
 
@@ -406,7 +406,7 @@ Ida Mårtensson hedrade Susanne med att spelade ett pianostycke, vi sjöng någr
 
 **Ett varmt tack till alla som på olika sätt hedrat Susannes minne och gjort det lättare för mig och familjen! Må Gud rikligen välsigna Er alla!**
 
-En serie fotografier från gravsättningen på Södra Hestra kyrkogård finns inlagda [här](http://valfridsson.net/ivan/foto08.htm).
+En serie fotografier från gravsättningen på Södra Hestra kyrkogård finns inlagda [här](/ivan-old/album/2000-gravsattning-av-susanne-pa-sodra-hestra-kyrkogard-den-3-maj-2000/).
 
 **2000-05-10**
 
