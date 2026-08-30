@@ -33,9 +33,10 @@ a {
 }
 
 .site-search {
+	--pagefind-ui-scale: 0.7;
 	position: relative;
-	flex: 1 1 220px;
-	max-width: 260px;
+	flex: 1 1 180px;
+	max-width: 220px;
 	margin-left: auto;
 	font-size: 0.9rem;
 }
