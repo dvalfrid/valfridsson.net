@@ -10,13 +10,12 @@ Vi bor på Södertörn, söder om Stockholm och är en del av Långarydssläkten
 
 På följande sätt kan Du enkelt nå oss:
 
-- **Postadress:** Axel Wennergrens väg 18, 135 39 TYRESÖ
+- **Adress:** Axel Wennergrens väg 18, 135 39 TYRESÖ
 - **E-post Ivan:** [ivan@valfridsson.net](mailto:ivan@valfridsson.net)
 - **Mobiltelefon Ivan:** 070-554 11 18 
 - **E-post Elsie:** [elsie@valfridsson.net](mailto:elsie@valfridsson.net)
 - **Mobiltelefon Elsie:** 070-543 40 85
 
-Skapades 1 januari 1997
 
 ## Länkar
 - [Haningekonstnarer](http://www.haningekonstnarer.se/konst/bmolankar.php)
