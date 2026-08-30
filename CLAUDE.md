@@ -79,6 +79,15 @@ content ever needs re-deriving from the original source.
   and fingerprinted via Hugo Pipes in `layouts/partials/head.html`,
   production-only (`hugo.IsProduction`). Colors/type live as CSS custom
   properties in `tokens.css`.
+- **Opt-in floated image**: for a portrait/decorative image with body
+  text flowing around it (rather than sitting alone on its own line),
+  use Hugo's built-in `figure` shortcode with `class="float-left"` or
+  `class="float-right"` — e.g.
+  `{{</* figure src="portrait.jpeg" alt="..." class="float-left" */>}}`
+  — see `content/ivan/susanne-hilliges-valfridsson/_index.sv.md` for a
+  real example. `main h2`/`h3`/`h4` clear the float automatically so a
+  new section always starts at full width. Plain `![]()` markdown
+  images remain the default (no float) everywhere else.
 - **Strict relative linking** for anything a reader clicks
   (`relLangURL`, `.RelPermalink`) — the custom domain `valfridsson.net`
   makes this less load-bearing than on a `github.io` subpath, but it's

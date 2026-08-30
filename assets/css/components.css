@@ -115,3 +115,55 @@
 .painting-caption {
 	color: var(--color-text);
 }
+
+/*
+	Opt-in image float, for a portrait/decorative image with text
+	flowing around it instead of the image sitting alone on its own
+	line. Use Hugo's built-in figure shortcode with class="float-left"
+	or class="float-right":
+		{{< figure src="portrait.jpeg" alt="..." class="float-left" >}}
+	Headings clear the float automatically (below) so a new section
+	always starts at full width even if the image is taller than the
+	paragraph(s) beside it.
+*/
+.float-left,
+.float-right {
+	margin: 0 0 var(--space-2) 0;
+	max-width: min(320px, 45%);
+}
+
+.float-left {
+	float: left;
+	margin-right: var(--space-3);
+}
+
+.float-right {
+	float: right;
+	margin-left: var(--space-3);
+}
+
+.float-left img,
+.float-right img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+.float-left figcaption,
+.float-right figcaption {
+	font-size: 0.8rem;
+	color: var(--color-muted);
+	margin-top: var(--space-1);
+}
+
+main h2,
+main h3,
+main h4 {
+	clear: both;
+}
+
+main::after {
+	content: "";
+	display: table;
+	clear: both;
+}

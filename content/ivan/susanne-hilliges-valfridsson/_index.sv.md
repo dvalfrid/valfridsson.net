@@ -3,7 +3,7 @@ title: "Susanne Hilliges-Valfridsson"
 draft: false
 ---
 
-![Susanne](susanne1_161.jpeg)
+{{< figure src="susanne1_161.jpeg" alt="Susanne" class="float-left" >}}
 
 **Susannes bakgrund i korthet:**
 
