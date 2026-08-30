@@ -6,6 +6,12 @@
 <body>
 	<header class="site-header">
 		<a class="site-title" href="{{ "/" | relLangURL }}">{{ .Site.Title }}</a>
+		{{ with .Section }}
+			{{ with site.GetPage (printf "/%s" .) }}
+				<span class="site-crumb-sep">/</span>
+				<a class="site-section" href="{{ .RelPermalink }}">{{ .Title }}</a>
+			{{ end }}
+		{{ end }}
 	</header>
 	<main id="main">
 		{{ block "main" . }}{{ end }}

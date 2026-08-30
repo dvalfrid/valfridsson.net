@@ -31,6 +31,20 @@ a {
 	color: var(--color-text);
 }
 
+.site-header .site-crumb-sep {
+	color: var(--color-muted);
+	margin: 0 var(--space-1);
+}
+
+.site-header .site-section {
+	text-decoration: none;
+	color: var(--color-muted);
+}
+
+.site-header .site-section:hover {
+	color: var(--color-accent);
+}
+
 .site-footer {
 	color: var(--color-muted);
 	font-size: 0.875rem;
