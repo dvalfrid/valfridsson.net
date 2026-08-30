@@ -169,3 +169,63 @@ once migration is complete and verified.
   for a content directory that has child pages but no `_index.md` of its
   own (confirmed by the pre-existing `content/masten/second-hand/{fotografier,resultat}/_index.sv.md`
   files following the same pattern already).
+- `ivan-old/` (Phase 5) is being migrated as a deliberate **partial run
+  first**: `scripts/migrate_photos/parse_frontpage_grid.py` is the real,
+  general-purpose parser (not a throwaway), but it has so far only been
+  *run* against 6 of the 72 `foto*.htm` pages (`--pages foto10.htm
+  foto50.htm foto57.htm foto61.htm foto65.htm foto72.htm`, its default)
+  plus the small, self-contained `bilder/Haraldsfoto.htm` genealogy
+  gallery — picked to exercise multi-topic grouping (foto72, 22 topics),
+  a page where album.htm skips some of the page's own anchor numbers
+  (foto61: anchors 5/6/8 present in the HTML but unmapped in album.htm,
+  folded forward into whichever topic is currently open rather than
+  starting bogus sub-sections), a single-topic page (foto65), two
+  whole-page/no-topic pages of different messiness (foto50 has no
+  internal anchors at all; foto57 has internal anchors 1-19 but
+  album.htm maps none of them to a title), and the PDF/mp3 inline
+  attachment case (foto57's `MOR0104a.pdf`, `Odesbacka.pdf`, `Mor.mp3`).
+  **Not yet migrated in this pass:** the other 66 `foto*.htm` pages,
+  `ovriga-bilder/` (the ~300MB orphaned/caption-less photo set),
+  `Shalom/`, and `temp/` — a follow-up task re-runs the same script with
+  the full `--pages foto01.htm..foto72.htm` list once this partial run's
+  build size/time is verified. `ivan-old/index.html` (an older, shorter
+  FrontPage duplicate of `ivan/index.html`) was not ported; `dagbok.html`/
+  `.htm` (confirmed duplicate of the diary) got the alias redirect
+  described above, already implemented on
+  `content/ivan/susanne-hilliges-valfridsson/dagbok/index.sv.md`.
+- ivan-old's photos live flat at the top level of `ivan-old/` with no
+  pre-generated resolution variants (unlike `_Media/`-based masten/cina/
+  ivan), so `parse_frontpage_grid.py` resolves images by plain
+  case-insensitive exact filename match (`resolve_exact`/
+  `build_media_index`), not `common.find_media`'s variant-priority
+  matching.
+- Every `foto*.htm` page ends in an identical boilerplate footer cell
+  ("Foto: <credit>", a `mailto:` link, "Föregående sida!"/"Hemsidan!" nav
+  links built from the reused `pil_v.gif` down-arrow icon, a copyright
+  notice) that looks structurally identical to a real multi-image content
+  cell and must be filtered out (`_is_footer_td`/`_FURNITURE_IMAGES` in
+  `parse_frontpage_grid.py`) — otherwise the two `pil_v.gif` icons get
+  misread as two bogus "photos" whose "captions" are the nav-link text
+  and the copyright notice.
+- `resources:` front matter's `params.caption` is rendered by
+  `layouts/_default/gallery.html` as a raw string (`{{ . }}`), **not**
+  piped through `markdownify` — a pre-existing constraint of the shared
+  gallery template (also affects some already-migrated `ivan/bilder/`
+  captions that embed literal, unrendered `**bold**` markers, e.g.
+  `content/ivan/bilder/2017/2017-06-21/index.sv.md`; left as-is, out of
+  scope for this pass since that content is already committed and the
+  template is shared across every site). `parse_frontpage_grid.py`
+  works around this for its *own* output rather than repeating the bug:
+  `node_to_md(..., plain=True)` strips markdown emphasis/link syntax from
+  caption text (keeping only the inner text), while a real PDF/mp3 link
+  found inside a caption is recorded and re-emitted as an actual markdown
+  link in the topic's *body* prose instead (a `**Bilagor:** [...]`
+  line), which *is* rendered through `.Content` normally.
+- A handful of the earliest `foto*.htm` pages (circa foto01-foto09,
+  1999-2000) use a different, reversed two-column layout — caption+date
+  text in one `<td>`, the bare `<img>` with no caption at all in the next
+  `<td>` — instead of the mainstream same-cell img-then-caption shape
+  every later page uses. `parse_frontpage_grid.py` does not (yet) handle
+  this reversed shape; none of those pages are in the default `--pages`
+  sample, and the follow-up full-migration task will need a small
+  extension (or a hand-migrated exception) for them.

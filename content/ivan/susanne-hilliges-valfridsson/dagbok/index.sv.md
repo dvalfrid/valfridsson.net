@@ -1,6 +1,9 @@
 ---
 title: "Dagbok - Susanne"
 draft: false
+aliases:
+  - "/ivan-old/dagbok.html"
+  - "/ivan-old/dagbok.htm"
 ---
 
 **Resumé**
