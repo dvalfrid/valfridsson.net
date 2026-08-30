@@ -14,7 +14,19 @@
 {{ if not .Params.subnav }}
 <ul class="page-list">
 	{{ range .Pages }}
-	<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+	<li>
+		<a href="{{ .RelPermalink }}">{{ .Title }}</a>
+		{{ $thumbs := partial "preview-images.html" (dict "page" . "count" 3) }}
+		{{ with $thumbs }}
+		<div class="page-list-thumbs">
+			{{ range . }}
+			{{ with .Fill "160x160 Center q70" }}
+			<img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="" loading="lazy">
+			{{ end }}
+			{{ end }}
+		</div>
+		{{ end }}
+	</li>
 	{{ end }}
 </ul>
 {{ end }}

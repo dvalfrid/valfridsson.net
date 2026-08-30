@@ -53,7 +53,18 @@ content ever needs re-deriving from the original source.
   gallery's `index.sv.md` for the pattern. Gallery photos reuse the
   legacy pre-generated resolution variant (`_med_hr` etc.) as-is;
   they are **not** run through Hugo's `.Resize`/`.Fill` image
-  processing.
+  processing when shown at full display size on their own gallery/
+  painting page. The one exception: `layouts/partials/preview-images.html`
+  (a recursive partial — walks into child pages when a listing entry has
+  no images of its own, e.g. a year folder whose actual photos live in
+  its dated sub-galleries) collects up to 3 sample images per entry on
+  `.page-list` renders (`layouts/_default/list.html`), and those *are*
+  run through `.Fill "160x160 Center q70"` — embedding full-size
+  originals as list-preview thumbnails would make large listings (e.g.
+  `ivan-old/album/`, 442 entries) untenably heavy (~93MB vs ~5MB).
+  Confirmed at ~1700 processed images site-wide this adds roughly 10-15s
+  to a clean `hugo --minify` (no persistent build cache in CI, so this
+  cost repeats every deploy).
 - **Bilingual via `multiple_files` i18n**: `index.<lang>.md` /
   `_index.<lang>.md` side by side in the same bundle folder.
   `defaultContentLanguageInSubdir = false`, so Swedish (the only

@@ -1,0 +1,24 @@
+{{/*
+	Recursively collects up to $.count image resources starting from
+	$.page: its own image resources first, then (if still short) each
+	child page's, depth-first, until enough are found or the tree runs
+	out. Lets a listing page show a few sample thumbnails per entry even
+	when an entry is itself a list of lists (e.g. ivan/bilder/2016/
+	containing dated sub-galleries with the actual photos).
+*/}}
+{{- $page := .page -}}
+{{- $count := .count -}}
+{{- $images := $page.Resources.ByType "image" -}}
+{{- if gt (len $images) $count -}}
+	{{- $images = first $count $images -}}
+{{- end -}}
+{{- if lt (len $images) $count -}}
+	{{- range $page.Pages -}}
+		{{- $need := sub $count (len $images) -}}
+		{{- if gt $need 0 -}}
+			{{- $more := partial "preview-images.html" (dict "page" . "count" $need) -}}
+			{{- $images = $images | union $more -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+{{- return $images -}}

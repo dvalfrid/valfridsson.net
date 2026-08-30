@@ -1,5 +1,5 @@
 ---
-title: "Micke"
+title: "Daniel"
 layout: gallery
 draft: false
 resources:
