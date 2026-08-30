@@ -3,6 +3,8 @@ title: "Cina Jeppsson"
 draft: false
 ---
 
+![Cina Jeppsson](cinaram_249.jpeg)
+
 Är bosatt i Haninge. Arbetar med applikationer, olja och akvarell. Är utbildad dekoratör och har även gått olika kurser i målning.
 
 Jag målar även på beställning. Har Du något motiv, som Du skulle vilja ha en tavla av så hör gärna av Dig till mig!

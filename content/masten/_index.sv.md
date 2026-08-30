@@ -4,6 +4,8 @@ tagline: "Ett sammarbete mellan LP Center och Pingstkyran second hand"
 draft: false
 ---
 
+![LP-kontakt](defaul2_med_hr.jpeg) ![Pingstkyrkans Second Hand](shpmulogga700_med_hr.jpeg)
+
 På Bollmora Gårdsväg 4 och 6 (kvateret Masten) driver Tyresö Pingstkyrka dels en LP-kontakt och dels en Second Handbutik. Dessa båda verksamheter är integrerade och samverkar både lokalmässigt och personalmässigt. I denna miljö kan den som har behov av rehabiliteringsstöd i någon form söka en plats för sitt speciella behov. I rehabiliteringen ingår samlingar, undervisning, arbetsträning och social träning. Verksamheten har en tydlig kristen profil, men man behöver inte vara kristen för att delta.
 
 Den som vill veta mer om:

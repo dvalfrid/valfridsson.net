@@ -3,7 +3,7 @@ title: "Ivan & Elsie Valfridsson"
 draft: false
 ---
 
-![Vendelsömalm](20100227-01_med_hr.jpeg)
+![Långarydssläktens vapen](langarydsslakten_med_hr.jpeg) ![Vendelsömalm](20100227-01_med_hr.jpeg)
 
 Vi bor på Södertörn, söder om Stockholm och är en del av Långarydssläkten - världens största kartlagda släkt - med ca 208.000 namn. Släkten har också en egen [hemsida](http://www.langarydsslakten.se/).
 
