@@ -221,11 +221,166 @@ once migration is complete and verified.
   found inside a caption is recorded and re-emitted as an actual markdown
   link in the topic's *body* prose instead (a `**Bilagor:** [...]`
   line), which *is* rendered through `.Content` normally.
-- A handful of the earliest `foto*.htm` pages (circa foto01-foto09,
-  1999-2000) use a different, reversed two-column layout — caption+date
-  text in one `<td>`, the bare `<img>` with no caption at all in the next
-  `<td>` — instead of the mainstream same-cell img-then-caption shape
-  every later page uses. `parse_frontpage_grid.py` does not (yet) handle
-  this reversed shape; none of those pages are in the default `--pages`
-  sample, and the follow-up full-migration task will need a small
-  extension (or a hand-migrated exception) for them.
+- **ivan-old (Phase 5) full run**, completing the partial run described
+  above. `parse_frontpage_grid.py --all` now processes `foto01.htm`
+  through `foto72.htm` plus `foto37b.htm`/`foto56b.htm` (74 pages total),
+  `bilder/Haraldsfoto.htm`, `Shalom/bild0610.htm`, and builds the
+  `ovriga-bilder` orphan gallery, in one run. Result: 442 album topic
+  bundles (3188 images), the existing 80-image `bilder/` gallery, a
+  15-image/5-mp3-attachment `shalom/` gallery, and a 119-image
+  `ovriga-bilder/` gallery — `content/ivan-old/` totals ~418MB (legacy
+  source `ivan-old/` was 477MB; the difference is dropped system files,
+  furniture GIFs, unreferenced top-level PDFs, and the excluded `.avi`
+  clips, see below).
+  - **Reversed early-page layout, solved at row level, not page level.**
+    The originally-suspected "foto01–foto09 use a different whole-page
+    shape" framing turned out to be wrong once all 74 pages were
+    actually inspected: the caption-td-then-image-td shape is used
+    *wholesale* on foto01.htm–foto09.htm and foto13.htm, but several
+    later, otherwise-mainstream pages (foto10.htm, foto12.htm, foto35.htm,
+    foto52.htm, foto56.htm) mix *individual* reversed-shape rows in among
+    ordinary same-cell img+caption rows — foto12.htm in particular is
+    genuinely ~56% reversed-shape rows. A whole-page shape dispatch can't
+    handle that; `parse_foto_page()` was rewritten to walk `<tr>`→`<td>`
+    (not a flat `table.find_all("td")`) and pair an image-less `<td>`
+    with whichever image-bearing `<td>` comes *next in the same row*
+    (`row_pending_caption`/`extract_caption_plain` in
+    `parse_frontpage_grid.py`), falling back to topic-intro prose only if
+    no image follows in that row. `_is_intro_not_caption()` excludes the
+    genuine exceptions from this pairing — an embedded `<object>`/`<embed>`
+    video (foto52.htm's YouTube embed), a nested `<table>` (foto56.htm's
+    "tack" message), or large `<font size>` styling (foto56.htm's
+    70th-birthday announcement) — since those are topic-intro/heading
+    prose, not a caption-in-waiting; a lone `<td>` spanning the whole row
+    (`colspan="2"`/`width="100%"`, e.g. foto65.htm's
+    `<b>Släktbilden</b>` section-label row) is also unconditionally intro,
+    since there's no "next `<td>` in this row" it could possibly pair
+    with. Text length is *not* a usable signal here: foto07.htm/
+    foto08.htm/foto09.htm are Susanne's funeral-memorial pages, where
+    each photo's *real, legitimate* caption is a 250–450 character
+    tribute quote from a named mourner.
+  - **Fixed two real bugs surfaced by this row-level rework**, both of
+    which also affected already-committed partial-run output (re-running
+    the full page list regenerated and corrected them in place, verified
+    byte-identical to the previously-approved content everywhere else):
+    1. A caption-only `<td>` whose text visually belongs to a topic
+       marked by an `<a name="N">` anchor that sits in a *later* `<td>`
+       of the *same row* (not its own `<td>`) was previously attached to
+       whatever topic was still open before that row started — one topic
+       too early. Example: foto56.htm's "Söndagen den 22 februari fyllde
+       Ivan 70 år…" intro paragraph shares a row with anchor `#5`, but
+       the anchor tag itself sits in the row's *second* `<td>` (next to
+       the photo), not the first (intro) `<td>`. Fixed by deferring an
+       intro `<td>`'s commit to `topic["intro"]` until the whole row
+       (including any anchor in a later cell) has been scanned, then
+       committing with the row's *final* `current_key`
+       (`row_deferred_intro` in `parse_foto_page()`) — rather than a
+       whole-row anchor pre-scan, which was tried first and rejected: it
+       broke rows where *each* `<td>` has its own independent
+       anchor+image pair (foto68.htm's flower photos, `#1`/`#2` etc. one
+       per cell in the same row).
+    2. `topic_slug()`'s collision counter was keyed on the *pre-suffix*
+       base string, so a topic whose auto-appended `-2`/`-3` disambiguator
+       could still collide with a *different* topic's own, unsuffixed,
+       naturally-identical slug without being detected — e.g. foto37.htm
+       has its own topic literally titled "TYFRI MC 2" (slug
+       `tyfri-mc-2`), and separately foto41.htm has a second `TYFRI MC`
+       topic on the same page as its own "TYFRI MC 2" topic; the second
+       `TYFRI MC` collided with foto38.htm's earlier one and produced
+       `tyfri-mc-2` as its *output*, silently overwriting foto37.htm's
+       real "TYFRI MC 2" bundle (title + `resources:` clobbered, its
+       original images left as orphaned files no longer listed in that
+       bundle's front matter). Fixed by tracking every *final* returned
+       slug in a flat `set[str]` instead of a `{base: count}` dict, so
+       collisions are always detected regardless of which topic's
+       suffix-generation produced the clash.
+  - **`parse_filename_date()` (`common.py`) gained a `1900 <= year` sanity
+    check.** Some of ivan-old's older filenames use a *2-digit*-year
+    `YYMMDDNN` convention (e.g. `05071005.jpg` for 2005-07-10) that the
+    existing 4-digit-prefix regex still matched, misreading the first
+    four digits as year 0507 and emitting a nonsense `date: 0508-02-01`
+    front matter value (44 topics were affected before the fix). Nothing
+    on this site predates 1900, so the guard can't reject any genuine
+    date; ivan/masten/cina's own filenames are unaffected (their `_Media`
+    libraries use real 4-digit years throughout).
+  - **`parse_album()` gained a second-priority page-title source.**
+    Every `foto01.htm`–`foto13.htm`-ish single-story early page's
+    descriptive text in `album.htm` sits as plain sibling `<td>` text
+    (`<td><a href="foto01.htm"><img src="framat.gif"></a></td><td>Vår
+    dotter Åsa med familj strax före resan till Kalifornien - mars
+    1999.</td>`), never wrapped in an `<a>` — the only `<a href>` in that
+    row wraps just the "next page" arrow icon (empty link text, already
+    skipped). Previously these pages fell back to their own `<title>`
+    tag, which is sometimes a real title (foto10.htm: "Sommaren 2000 -
+    några bilder") but sometimes a generic placeholder (foto01.htm:
+    "Ivans foto01"). `parse_album()` now also scans for this
+    icon-only-cell-plus-sibling-text row shape and fills `page_title_map`
+    from it (`setdefault`, so it never overrides a real `album.htm`
+    anchor-derived title). One side effect: foto10.htm's fallback title
+    changed from the `<title>`-tag-derived "Sommaren 2000 - några bilder"
+    to the `album.htm`-row-derived "Några foton från sommaren 2000" (a
+    different slug) — the stale `content/ivan-old/album/2000-sommaren-2000-nagra-bilder/`
+    directory from the earlier partial-run commit was deleted in favor of
+    the new `2000-nagra-foton-fran-sommaren-2000/` (identical 39 photos,
+    just the more authoritative album.htm-curated title).
+  - **`foto57x.htm` deliberately excluded from the 75-file set found on
+    disk** (72 numbered pages + `foto37b.htm`/`foto56b.htm`/`foto57x.htm`
+    = 75; only 74 processed). Diffed byte-for-byte against `foto57.htm`:
+    same title, same 40 photos, same captions — only the family-photo
+    `<map>` `<area>` coordinates/labels and a footer nav link still
+    pointing at the pre-move `crossnet.se` domain differ, confirming it's
+    a stale prior FrontPage revision of foto57.htm itself, not a
+    distinct topic. Not referenced anywhere in `album.htm` either.
+    `foto37b.htm`/`foto56b.htm`, by contrast, are genuine continuation
+    pages: distinct, non-overlapping photo sets (1 filename overlap out
+    of 157+58 and 83+112 respectively — a shared furniture icon) with
+    their own real `album.htm`-mapped topics, processed normally.
+  - **`Shalom/bild0610.htm`** (15 dated photos from a 2006 Shalom
+    board/work meeting in Källered) uses yet another shape — one `<p>` of
+    `<a href="X.jpg">X.jpg</a>: caption<br>` lines, all in a single
+    paragraph (unlike `bilder/Haraldsfoto.htm`'s one-`<p>`-per-link
+    shape) — handled by a small dedicated `process_shalom_gallery()`
+    rather than shoehorned into `parse_foto_page()`. Real per-photo
+    captions exist (names/event labels: "Jonas", "Stefan", "Gruppfoto:
+    …", "Styrelsemöte"), so this is a genuine dated gallery, not an
+    undated one. The folder's 5 `jesajadel1.mp3`–`jesajadel5.mp3`
+    recordings (Isaiah Bible-study/sermon audio; the plan's own
+    description guessed 4, disk has 5) aren't linked from `bild0610.htm`
+    or anywhere else in `ivan-old/` (checked via grep across the whole
+    tree) — genuinely orphaned audio, kept as downloadable attachments on
+    the `shalom/` page (same judgment call as foto57.htm's
+    `MOR0104a.pdf`/`Odesbacka.pdf`/`Mor.mp3` case) rather than dropped,
+    since there's no better home for them and they're small.
+  - **`ivan-old/video/` (six `.avi` clips, ~51MB) dropped, not migrated.**
+    Checked via grep across every `.htm` page in `ivan-old/` (including
+    `album.htm`) for all six filenames — zero references anywhere, not
+    even a dead link. Old, low-resolution `.avi` clips this old are also
+    unlikely to play in a modern browser without transcoding. Given
+    they're both orphaned *and* of doubtful standalone playback value,
+    the call here was to drop them rather than carry over 51MB of
+    probably-unplayable video — different from the `Shalom` mp3s (small,
+    definitely still playable, kept) and the `ovriga-bilder` photos
+    (large in aggregate but each one is still a normal, viewable JPEG).
+  - **`ovriga-bilder/` orphan-gallery scope is deliberately narrow: only
+    top-level `.jpg` files.** ivan-old's top-level directory also has 20
+    `.gif` files, but inspection showed these split cleanly into two
+    unrelated categories — genuine early-page content photos already
+    consumed by `foto01.htm`/`foto08.htm` (`henric01-03.gif`,
+    `bengt01-03.gif`) and pure page furniture/decoration (advent-calendar
+    icons `1adv_x.gif` etc., `framat.gif`/`pil_v.gif`/`pil_h.gif` nav
+    arrows) that was never real photo content in the first place — so
+    `.gif` was excluded from the orphan-diff entirely rather than risk
+    surfacing decorative icons as if they were "missing photos." The
+    top-level `iva9822b.pdf`/`iva9914.pdf`/`iva0029.pdf`/…/`iva1512.pdf`
+    Christmas-letter PDFs (pre-2015 continuation of the ones already
+    migrated to `content/ivan/ivan-valfridsson/`) are **also** left
+    unmigrated here, on purpose: wiring them up means editing
+    `content/ivan/ivan-valfridsson/index.sv.md`'s Christmas-letter list
+    (currently pointing at these exact paths, expected-404 per that
+    page's own migration note) — out of scope for this ivan-old-only
+    pass, which was explicitly scoped to not touch already-migrated
+    `ivan`/`masten`/`cina` Hugo content. Those links remain 404 until a
+    future pass touches that file specifically.
+  - `content/ivan-old/album/_index.sv.md` and `content/ivan-old/_index.sv.md`
+    updated: the "this is a partial subset" disclaimer removed, and nav
+    links to the new `shalom/` and `ovriga-bilder/` galleries added.

@@ -112,12 +112,21 @@ def parse_filename_date(stem: str) -> str | None:
     """Recover a YYYY-MM-DD date embedded at the start of a legacy media
     filename stem, e.g. "20180815-5149" or "2015-12-19_2843_edited-1w" ->
     "2018-08-15" / "2015-12-19". Returns None if the stem doesn't start
-    with a plausible date."""
+    with a plausible date.
+
+    Some of ivan-old's older photos instead use a *2-digit*-year
+    "YYMMDDNN" convention (e.g. "05071005.jpg" for 2005-07-10) -- the
+    regex below still matches those (it just grabs the first 4 digits as
+    "year"), misreading them as year 0507. The `1900 <= year` guard
+    rejects that: nothing on this site predates 1900, so any "year" below
+    it is unambiguously this filename-convention collision, not a real
+    date -- falling through to None (the caller's next fallback, or no
+    date at all) rather than emitting a nonsense `date: 0508-02-01`."""
     m = _FILENAME_DATE_RE.match(stem)
     if not m:
         return None
     year, month, day = int(m.group("year")), int(m.group("month")), int(m.group("day"))
-    if not (1 <= month <= 12 and 1 <= day <= 31):
+    if not (1900 <= year and 1 <= month <= 12 and 1 <= day <= 31):
         return None
     return f"{year:04d}-{month:02d}-{day:02d}"
 

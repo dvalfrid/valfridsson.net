@@ -63,27 +63,46 @@ python -m pip install beautifulsoup4
   RichTextElement pages the other parsers handle). `parse_album()` reads
   `album.htm`'s anchor-linked topic list into a `{foto-filename: {anchor:
   topic title}}` map; `parse_foto_page()` walks a given `fotoNN.htm`'s
-  `<td>` cells in document order, using the album.htm-mapped `<a
-  name="N">` anchors found in the page as topic-section boundaries (an
-  in-page anchor *not* in album.htm's map is a non-boundary, folded into
-  whichever topic is currently open — see the foto61.htm example in
-  CLAUDE.md's decisions log). A page with zero album.htm-mapped anchors
-  is one single topic covering the whole page. One gallery bundle per
-  resulting topic is written flat under `content/ivan-old/album/<slug>/`
-  (year-prefixed where derivable, for global slug uniqueness). A caption
-  that embeds a local `.pdf`/`.mp3` link (e.g. foto57.htm's
-  `MOR0104a.pdf`, `Odesbacka.pdf`, `Mor.mp3`) gets that file copied into
-  the topic's bundle and a real markdown link added to the topic's body
-  prose instead of the caption (`resources:` captions aren't
-  markdownified — see CLAUDE.md). `process_bilder_gallery()` separately
-  parses `bilder/Haraldsfoto.htm` (a flat `<p><a href="X.jpg">X.jpg</a></p>`
-  link list, not `<img>` tags -- the Lindberg family genealogy photos)
-  into one undated gallery at `content/ivan-old/bilder/`. Takes
-  `--pages foto10.htm foto50.htm ...` to select which `foto*.htm` files
-  to process (default: a small representative sample, see
-  `DEFAULT_PAGES` and CLAUDE.md — **not** all 72; see "Known
-  exclusions/decisions (ivan-old)" below for the deliberate partial-run
-  scoping). Run with `--dry-run` to preview.
+  `<tr>`→`<td>` rows in document order (not a flat `table.find_all("td")`
+  — needed so a caption-only `<td>` can be paired with the image-bearing
+  `<td>` that follows it in the *same row*, see the reversed-layout note
+  below), using the album.htm-mapped `<a name="N">` anchors found in the
+  page as topic-section boundaries (an in-page anchor *not* in
+  album.htm's map is a non-boundary, folded into whichever topic is
+  currently open — see the foto61.htm example in CLAUDE.md's decisions
+  log). A page with zero album.htm-mapped anchors is one single topic
+  covering the whole page. One gallery bundle per resulting topic is
+  written flat under `content/ivan-old/album/<slug>/` (year-prefixed
+  where derivable, globally unique via a `set[str]` of every final slug
+  already returned this run — not a `{base: count}` dict, which missed a
+  real second-order collision, see CLAUDE.md). A caption that embeds a
+  local `.pdf`/`.mp3` link (e.g. foto57.htm's `MOR0104a.pdf`,
+  `Odesbacka.pdf`, `Mor.mp3`) gets that file copied into the topic's
+  bundle and a real markdown link added to the topic's body prose instead
+  of the caption (`resources:` captions aren't markdownified — see
+  CLAUDE.md). A run of the earliest pages (foto01.htm-foto09.htm,
+  foto13.htm) plus scattered individual rows on some later,
+  otherwise-mainstream pages use a *reversed* two-column row shape —
+  caption in one `<td>`, the bare `<img>` in the next — handled at row
+  level, not as a whole-page shape switch (see CLAUDE.md for why a
+  page-level dispatch doesn't work here). `process_bilder_gallery()`
+  separately parses `bilder/Haraldsfoto.htm` (a flat
+  `<p><a href="X.jpg">X.jpg</a></p>` link list, not `<img>` tags -- the
+  Lindberg family genealogy photos) into one undated gallery at
+  `content/ivan-old/bilder/`, and `process_shalom_gallery()` parses
+  `Shalom/bild0610.htm` (one `<p>` of `<a href="X.jpg">X.jpg</a>:
+  caption<br>` lines) into one dated gallery at `content/ivan-old/shalom/`
+  with its folder's orphaned `jesajadel*.mp3` recordings attached as
+  downloadable resources. `build_ovriga_bilder()` diffs every top-level
+  `.jpg` filename against everything `process_foto_pages()` actually
+  consumed and writes whatever's left as one big undated, caption-less
+  gallery at `content/ivan-old/ovriga-bilder/`. Takes `--pages foto10.htm
+  foto50.htm ...` to select a specific set of `foto*.htm` files (default:
+  a small representative sample, see `DEFAULT_PAGES`), or `--all` for the
+  full run (`ALL_PAGES` — all of foto01.htm-foto72.htm plus
+  foto37b.htm/foto56b.htm, **not** foto57x.htm, see "Known
+  exclusions/decisions (ivan-old)" below — plus bilder/, Shalom/ and
+  ovriga-bilder). Run with `--dry-run` to preview.
 - `parse_cina_captions.py` — parses `cina/aktuella-tavlor.html` and
   `cina/tidigare-produktion.html` (one painting page bundle per
   image+caption pair, `layout: painting`) and `cina/fotoalbum/*.html`
@@ -117,6 +136,8 @@ python scripts/migrate_photos/parse_frontpage_grid.py --dry-run
 python scripts/migrate_photos/parse_frontpage_grid.py
 # process a specific set of foto*.htm pages instead of the default sample:
 python scripts/migrate_photos/parse_frontpage_grid.py --pages foto01.htm foto02.htm ... foto72.htm
+# full run: all of ALL_PAGES, plus bilder/, Shalom/ and the ovriga-bilder orphan gallery:
+python scripts/migrate_photos/parse_frontpage_grid.py --all
 ```
 
 `parse_sandvox_flatyear.py` imports `get_orphan_thumbnail` from
@@ -246,23 +267,24 @@ parser.
 
 ## Known exclusions/decisions (ivan-old)
 
-- **Deliberate partial run.** `ivan-old/` is 477MB across ~3500 photos —
-  far larger than any prior migration target — so `parse_frontpage_grid.py`
-  was written as the real, general-purpose parser but has only been *run*
-  against 6 of the 72 `foto*.htm` pages plus `bilder/Haraldsfoto.htm`, to
-  validate the parser logic and gut-check GitHub Pages deploy behavior
-  (build time, artifact size) before committing to the full run. See
-  CLAUDE.md's decisions log for exactly which 6 pages and why. A
-  follow-up task re-runs `parse_frontpage_grid.py --pages foto01.htm
-  foto02.htm ... foto72.htm` (all 72) once this partial run is verified.
-- `ivan-old/ovriga-bilder` (the ~300MB set of photos with no `foto*.htm`
-  reference/caption) and `ivan-old/Shalom/` (2006 photos + mp3s) are
-  **not** touched by this pass at all — left for the full-migration
-  follow-up per the plan.
+- **Full run complete.** `parse_frontpage_grid.py --all` processes
+  `foto01.htm`-`foto72.htm` plus `foto37b.htm`/`foto56b.htm` (74 of the
+  75 `foto*.htm` files found on disk — `foto57x.htm` is deliberately
+  excluded, see below), `bilder/Haraldsfoto.htm`, `Shalom/bild0610.htm`,
+  and the `ovriga-bilder/` orphan gallery, in one run: 442 album topic
+  bundles (3188 images), 1 bilder gallery (80 images), 1 shalom gallery
+  (15 images + 5 mp3 attachments), 1 ovriga-bilder gallery (119 images).
+  `content/ivan-old/` totals ~418MB. See CLAUDE.md's decisions log for
+  the full account of what changed since the earlier 6-page partial-run
+  validation, including two real bugs the full run's row-level rework
+  surfaced and fixed (an anchor-in-a-later-`<td>` topic misattribution,
+  and a `topic_slug()` collision that let one topic's bundle silently
+  overwrite another's).
 - `ivan-old/index.html` (an older, shorter FrontPage duplicate of
   `ivan/index.html`'s content) was not ported — `content/ivan-old/_index.sv.md`
   is a short, freshly-written landing page instead, linking to
-  `/ivan-old/album/` and `/ivan-old/bilder/`.
+  `/ivan-old/album/`, `/ivan-old/bilder/`, `/ivan-old/shalom/` and
+  `/ivan-old/ovriga-bilder/`.
 - `ivan-old/dagbok.html`/`.htm` (confirmed duplicate of the already-migrated
   diary) was not migrated as content; `content/ivan/susanne-hilliges-valfridsson/dagbok/index.sv.md`
   got `aliases: ["/ivan-old/dagbok.html", "/ivan-old/dagbok.htm"]` added
@@ -272,19 +294,25 @@ parser.
   links point at `ivan/foto/*.jpg` — a path that doesn't exist anywhere
   in this repo (dead links on the live legacy site already, not a
   migration regression). Not migrated.
-- ivan-old's `foto*.htm`/`album.htm`/`bilder/Haraldsfoto.htm` pages are
-  windows-1252-encoded (explicit on the pages that declare a charset;
-  the rest are undeclared but same era/tool/encoding) — `_read_html()`
-  decodes as `cp1252`, not UTF-8.
+- `ivan-old/video/` (six `.avi` clips, ~51MB) — checked via grep across
+  every `.htm` page in `ivan-old/`, zero references anywhere. Dropped:
+  orphaned *and* old low-resolution `.avi` clips are unlikely to be
+  playable in a modern browser without transcoding, unlike `Shalom/`'s
+  small, still-playable orphaned mp3s (kept) or `ovriga-bilder`'s
+  ordinary, still-viewable orphaned JPEGs (also kept).
+- Top-level `ivaXXXX.pdf` Christmas-letter PDFs (pre-2015 continuation of
+  the ones already migrated to `content/ivan/ivan-valfridsson/`) are
+  **not** migrated by this pass — wiring them up requires editing
+  `content/ivan/ivan-valfridsson/index.sv.md`, which is explicitly out of
+  scope for an ivan-old-only pass. Those Christmas-letter list entries
+  remain 404 until a future pass touches that file specifically.
+- ivan-old's `foto*.htm`/`album.htm`/`bilder/Haraldsfoto.htm`/
+  `Shalom/bild0610.htm` pages are windows-1252-encoded (explicit on the
+  pages that declare a charset; the rest are undeclared but same
+  era/tool/encoding) — `_read_html()` decodes as `cp1252`, not UTF-8.
 - See CLAUDE.md's decisions log for the footer-boilerplate-cell filter
   (`_is_footer_td`/`_FURNITURE_IMAGES`), the unmapped-in-page-anchor
   fold-forward rule, the `params.caption`-isn't-markdownified caption/body
-  split, and the reversed-column early-page layout (foto01-foto09-ish)
-  that isn't handled yet.
-
-## Future phases
-
-A follow-up task extends `parse_frontpage_grid.py`'s `--pages` run to
-all 72 `foto*.htm` pages, migrates `ivan-old/ovriga-bilder/` (undated
-gallery) and `ivan-old/Shalom/`, and finally a holistic cutover pass
-across all four sites together per the migration plan.
+  split, the row-level (not page-level) reversed-caption-layout handling,
+  the `foto57x.htm` exclusion, and the `ovriga-bilder`/`Shalom`/`video`
+  scoping decisions in full detail.
