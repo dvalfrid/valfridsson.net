@@ -3,7 +3,7 @@ title: "Ivan Valfridsson"
 draft: false
 ---
 
-![Ivan Valfridsson](20080412-03p1-1_252.jpeg)
+{{< figure src="20080412-03p1-1_252.jpeg" alt="Ivan Valfridsson" class="float-left" >}}
 
 **Min bakgrund i korthet:**
 

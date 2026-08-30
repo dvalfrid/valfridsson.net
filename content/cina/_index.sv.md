@@ -3,7 +3,7 @@ title: "Cina Jeppsson"
 draft: false
 ---
 
-![Cina Jeppsson](cinaram_249.jpeg)
+{{< figure src="cinaram_249.jpeg" alt="Cina Jeppsson" class="float-right" >}}
 
 Är bosatt i Haninge. Arbetar med applikationer, olja och akvarell. Är utbildad dekoratör och har även gått olika kurser i målning.
 

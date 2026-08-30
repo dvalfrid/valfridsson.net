@@ -5,7 +5,7 @@ draft: false
 
 **Min bakgrund i korthet:**
 
-![Elsie Valfridsson](elsiemini_140.jpeg)
+{{< figure src="elsiemini_140.jpeg" alt="Elsie Valfridsson" class="float-left" >}}
 
 Jag, Elsie Kristina Nilsson-Valfridsson, föddes för 70 år sedan i en by som kallas Trösten i Bergsjö socken i norra Hälsingland. Mina föräldrar Greta och John Nilsson köpte ett torp något år innan jag föddes, det låg nära två sjöar med ett sund emellan (Kyrksjön och Storsjön) därför kallades platsen Sundet. När jag föddes var min bror Åke två år gammal. Jag föddes hemma i kammaren! Barnmorskan, fröken Lindstrand kom farande med spark!! En god vän till mamma, Stina, kom och hjälpte till också. Hon tog med sig Åke och de satte sig i ladugården och väntade på tillökningen! Åke hade varit så undrande över varför de måste vara i ladugården. Hur Stina förklarade detta vet jag inte!
 
