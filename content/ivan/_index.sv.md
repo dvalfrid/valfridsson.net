@@ -1,5 +1,6 @@
 ---
 title: "Ivan & Elsie Valfridsson"
+subnav: true
 draft: false
 ---
 

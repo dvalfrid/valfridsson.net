@@ -1,10 +1,21 @@
 {{ define "main" }}
 <h1>{{ .Title }}</h1>
+{{ if .Params.subnav }}
+<nav class="section-nav">
+	<ul>
+		{{ range .Pages }}
+		<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+		{{ end }}
+	</ul>
+</nav>
+{{ end }}
 {{ with .Params.tagline }}<p class="tagline">{{ . }}</p>{{ end }}
 {{ .Content }}
+{{ if not .Params.subnav }}
 <ul class="page-list">
 	{{ range .Pages }}
 	<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
 	{{ end }}
 </ul>
+{{ end }}
 {{ end }}
