@@ -1,0 +1,33 @@
+.tagline {
+	color: var(--color-muted);
+	font-style: italic;
+}
+
+.gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: var(--space-2);
+	list-style: none;
+	margin: var(--space-3) 0;
+	padding: 0;
+}
+
+.gallery figure {
+	margin: 0;
+}
+
+.gallery figcaption {
+	font-size: 0.875rem;
+	color: var(--color-muted);
+	margin-top: var(--space-1);
+}
+
+.page-list {
+	list-style: none;
+	padding: 0;
+}
+
+.page-list li {
+	padding: var(--space-1) 0;
+	border-bottom: 1px solid var(--color-border);
+}

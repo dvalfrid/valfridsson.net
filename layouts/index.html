@@ -1,0 +1,5 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ with .Params.tagline }}<p class="tagline">{{ . }}</p>{{ end }}
+{{ .Content }}
+{{ end }}

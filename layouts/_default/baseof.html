@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="{{ .Language.Locale }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+	<header class="site-header">
+		<a class="site-title" href="{{ "/" | relLangURL }}">{{ .Site.Title }}</a>
+	</header>
+	<main id="main">
+		{{ block "main" . }}{{ end }}
+	</main>
+	<footer class="site-footer">
+		<p>&copy; {{ now.Year }} Daniel Valfridsson</p>
+	</footer>
+</body>
+</html>

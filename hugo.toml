@@ -1,0 +1,34 @@
+baseURL = "https://valfridsson.net/"
+title = "valfridsson.net"
+
+defaultContentLanguage = "sv"
+defaultContentLanguageInSubdir = false
+
+enableRobotsTXT = true
+summaryLength = 30
+
+[languages]
+  [languages.sv]
+    label = "Svenska"
+    locale = "sv-SE"
+    weight = 1
+    title = "valfridsson.net"
+
+  [languages.en]
+    label = "English"
+    locale = "en-US"
+    weight = 2
+    title = "valfridsson.net"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+
+[minify]
+  minifyOutput = true
+
+[imaging]
+  # Legacy Sandvox image variants (_med_hr, _360, etc.) are reused as-is.
+  # No Hugo image processing pipeline is applied to gallery photos.
+  quality = 85
