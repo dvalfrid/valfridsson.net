@@ -33,10 +33,34 @@ a {
 }
 
 .site-search {
+	position: relative;
 	flex: 1 1 220px;
 	max-width: 260px;
 	margin-left: auto;
 	font-size: 0.9rem;
+}
+
+/*
+	Pagefind's Default UI renders results inline in normal document flow
+	by default, which pushes the whole page down. Detach the results
+	panel into a floating dropdown instead. Equal CSS specificity to
+	pagefind-ui.css's own scoped rule, loaded after ours, so !important
+	is needed on the properties it also sets (position/margin-top).
+*/
+.site-search .pagefind-ui__results-area {
+	position: absolute !important;
+	top: 100%;
+	right: 0;
+	z-index: 100;
+	width: min(90vw, 420px);
+	max-height: 70vh;
+	overflow-y: auto;
+	margin-top: var(--space-1) !important;
+	padding: var(--space-2);
+	background: var(--color-bg);
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .site-header .site-title {
