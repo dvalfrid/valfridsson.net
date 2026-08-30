@@ -14,12 +14,11 @@ FrontPage-era HTML:
 
 The legacy static HTML export (root `index.html`, `cina/`, `ivan/`,
 `ivan-old/`, `masten/`, `sandvox_*` theme dirs, `_Resources/`,
-`ErrorDoc/`) that served as source material for `scripts/migrate_photos/`
-has been removed from the working tree now that migration is complete
-and the Hugo site is live — it's still recoverable from git history if
-a script or a piece of content needs re-deriving from the original
-source, but `scripts/migrate_photos/` itself won't run against a fresh
-checkout without restoring it first.
+`ErrorDoc/`) and the one-off migration scripts that converted it into
+this Hugo content (`scripts/migrate_photos/`) have both been removed
+from the working tree now that migration is complete and the Hugo site
+is live — both are still recoverable from git history if a piece of
+content ever needs re-deriving from the original source.
 
 ## Machine setup
 
@@ -30,9 +29,6 @@ checkout without restoring it first.
   sync with what's installed locally.
 - Node.js (for `npx pagefind`, the search-index build step; no other
   JS tooling is used).
-- Python 3 + `beautifulsoup4`/`lxml` only if re-running the one-off
-  migration scripts in `scripts/migrate_photos/` — not needed for normal
-  site work.
 
 ## Commands
 
