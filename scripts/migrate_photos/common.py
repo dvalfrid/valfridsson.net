@@ -68,6 +68,76 @@ def parse_sv_timestamp(text: str) -> str | None:
     return f"{year:04d}-{month:02d}-{day:02d}"
 
 
+# ivan/bilder's flat "year" pages (2016.html-2020.html, bilder/untitled.html
+# for 2015) embed the photo date directly in each caption, in one of two
+# hand-typed Swedish styles depending on which year it was written:
+#   - full month name: "26 december 2018", "13 december 2018."
+#   - day/month -YY:    "23/12 -15", "den 31/12 -16", "6/8-15" (no space)
+# Unlike parse_sv_timestamp's 3-letter-month masten format, the long-month
+# style here spells the month out in full, so the month token is matched
+# greedily and only its first three characters are looked up.
+_LONG_SV_DATE_RE = re.compile(
+    r"(?P<day>\d{1,2})\s+(?P<month>[a-zA-ZåäöÅÄÖ]+)\s+(?P<year>\d{4})"
+)
+_SLASH_SV_DATE_RE = re.compile(
+    r"(?P<day>\d{1,2})/(?P<month>\d{1,2})\s*-\s*(?P<year>\d{2})\b"
+)
+
+
+def parse_sv_caption_date(text: str) -> str | None:
+    """Parse a photo caption's embedded Swedish date (either the
+    full-month-name or the D/M -YY style, see above) into an ISO date
+    string. Returns None if neither pattern matches."""
+    if not text:
+        return None
+    m = _LONG_SV_DATE_RE.search(text)
+    if m:
+        month = _SV_MONTHS.get(m.group("month").lower()[:3])
+        if month:
+            return f"{int(m.group('year')):04d}-{month:02d}-{int(m.group('day')):02d}"
+    m = _SLASH_SV_DATE_RE.search(text)
+    if m:
+        day = int(m.group("day"))
+        month = int(m.group("month"))
+        if 1 <= month <= 12 and 1 <= day <= 31:
+            year = 2000 + int(m.group("year"))
+            return f"{year:04d}-{month:02d}-{day:02d}"
+    return None
+
+
+_FILENAME_DATE_RE = re.compile(r"^(?P<year>\d{4})-?(?P<month>\d{2})-?(?P<day>\d{2})")
+
+
+def parse_filename_date(stem: str) -> str | None:
+    """Recover a YYYY-MM-DD date embedded at the start of a legacy media
+    filename stem, e.g. "20180815-5149" or "2015-12-19_2843_edited-1w" ->
+    "2018-08-15" / "2015-12-19". Returns None if the stem doesn't start
+    with a plausible date."""
+    m = _FILENAME_DATE_RE.match(stem)
+    if not m:
+        return None
+    year, month, day = int(m.group("year")), int(m.group("month")), int(m.group("day"))
+    if not (1 <= month <= 12 and 1 <= day <= 31):
+        return None
+    return f"{year:04d}-{month:02d}-{day:02d}"
+
+
+def extract_img_src(tag) -> str | None:
+    """Return the filename of the best-available image source referenced
+    by a Sandvox <img> or hi-res-swap <span data-img-src-hr> tag (the
+    latter used by till-marita/, some flat-year pages, and Micke's
+    album -- a JS snippet swaps in data-img-src-hr on high-DPI displays).
+    Prefers data-img-src-hr > data-img-src > src. Returns None if none
+    of those attributes are present."""
+    if tag is None:
+        return None
+    for attr in ("data-img-src-hr", "data-img-src", "src"):
+        value = tag.get(attr)
+        if value:
+            return Path(value).name
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Image variant selection
 # ---------------------------------------------------------------------------

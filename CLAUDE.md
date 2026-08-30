@@ -96,13 +96,16 @@ once migration is complete and verified.
   fall back to a generic `Målning N` title/slug rather than a
   mis-extracted one.
 - `ivan-old/dagbok.html`/`.htm` was a confirmed duplicate of
-  `content/ivan/susanne-hilliges-valfridsson/index.sv.md` — not
-  migrated as content. That page carries `aliases:` for both old URLs
-  so they redirect instead of 404ing.
+  `content/ivan/susanne-hilliges-valfridsson/dagbok/index.sv.md` — not
+  migrated as content. That page should carry `aliases:` for both old
+  URLs so they redirect instead of 404ing (path corrected from the
+  originally-planned `.../susanne-hilliges-valfridsson/index.sv.md` — see
+  the branch/leaf bundle split noted further below; the diary itself is
+  unaffected, still one unsplit page, just one path segment deeper).
 - Sandvox "PhotoGridIndex" one-photo-per-page galleries (`ivan/bilder/2015/**`,
   `ivan/till-marita/**` in the legacy tree) were collapsed into one
   gallery page per month/date rather than ported as one page per photo.
-- Susanne's diary (`content/ivan/susanne-hilliges-valfridsson/`) is
+- Susanne's diary (`content/ivan/susanne-hilliges-valfridsson/dagbok/`) is
   intentionally **one continuous page**, not split into dated entries —
   it's a personal narrative (illness through Ivan's epilogue and funeral
   program), not a changelog. Don't restructure it to match the
@@ -113,3 +116,56 @@ once migration is complete and verified.
 - `ivan-old/temp/` (a guestbook spreadsheet) and Sandvox/FrontPage system
   files (theme CSS dirs, `_Resources` JS libs, `ErrorDoc/` beyond 404,
   `sitemap.xml.gz`, `index.xml`) were dropped entirely, not migrated.
+- `ivan/untitled.html` (top-level) is a stale, truncated duplicate of
+  `ivan/bilder/untitled.html` — the latter is the real, linked-from-nav
+  "2015" flat-year page (same repeating-image-and-caption shape as
+  `bilder/2016.html`-`2020.html`) and is processed accordingly by
+  `scripts/migrate_photos/parse_sandvox_flatyear.py`; the top-level
+  duplicate is dropped, unreferenced from any real nav. It turned out to
+  be a *different* photo set from the separate `ivan/bilder/2015/`
+  PhotoGridIndex folder (camera-native filenames, no captions) rather
+  than the same one twice, so both now live side by side under
+  `content/ivan/bilder/2015/` — dated entries from the flat page, plus
+  `januari/`/`februari/` month galleries from the PhotoGridIndex folder.
+- `ivan/micke.html` (top-level, 5 photos) is a redundant subset of
+  `ivan/bilder/micke.html` (75 photos, the complete album) — only the
+  latter is migrated, to `content/ivan/bilder/micke/`, as one undated
+  gallery bundle (captions dropped: every one was just the image's own
+  filename echoed back, not a real caption).
+- `ivan/20200725-ah-3045.html`, an orphaned page with no inbound links
+  and a broken embedded video (no ImageElement), had its one salvageable
+  still image (the video's poster-frame JPEG) folded into the
+  `content/ivan/bilder/2020/2020-07-25/` gallery bundle — same real date
+  already produced from `bilder/2020.html` — rather than given its own
+  near-empty gallery.
+- `ivan/iva1712pdf.html` wraps a PNG, not a real PDF (no `iva1712.pdf`
+  exists in the source). The Christmas-letter list on
+  `content/ivan/ivan-valfridsson/index.sv.md` links 2017 to an in-page
+  `#julbrev-2017` anchor (heading + inline image) instead of a
+  fabricated `.pdf` link — a sibling `julbrev-2017/` page bundle was
+  tried first but doesn't work in Hugo: `ivan-valfridsson` is a *leaf*
+  bundle (`index.sv.md`), and leaf bundles cannot contain nested content
+  pages, only page resources (a subdirectory with its own `index.sv.md`
+  inside one is silently dropped from the build, not an error).
+- `ivan/susanne-hilliges-valfridsso/index.html` is a real autobiography
+  for Susanne (portrait + prose), not just a landing page. Since the
+  diary (`content/ivan/susanne-hilliges-valfridsson/`) needed to keep
+  its established path per the decision above,
+  `content/ivan/susanne-hilliges-valfridsson/` was made a *branch*
+  bundle (`_index.sv.md`, the bio) with the diary moved one level down
+  to its child leaf bundle `content/ivan/susanne-hilliges-valfridsson/dagbok/`
+  — mirroring the legacy site's own nav structure exactly, where "DAGBOK
+  - Susanne" was already a submenu entry under "Susanne
+  Hilliges-Valfridsson". The diary itself is still fully unsplit, per
+  the decision above — only its URL gained one path segment.
+- `ivan/till-marita/`'s 71 photo pages (filenames `YYYYMMDD-NNNN.html`)
+  all resolve to the same date, 2018-08-15 — grouping is computed from
+  each filename rather than hardcoded, but happens to produce exactly
+  one `content/ivan/till-marita/2018-08-15/` gallery bundle.
+- Every `content/ivan/bilder/<year>/` and `content/ivan/till-marita/`
+  needs its own hand-authored `_index.sv.md` for Hugo to render a
+  section list page there — unlike some other frameworks, this
+  particular Hugo build does not auto-generate a browsable `index.html`
+  for a content directory that has child pages but no `_index.md` of its
+  own (confirmed by the pre-existing `content/masten/second-hand/{fotografier,resultat}/_index.sv.md`
+  files following the same pattern already).
