@@ -1,0 +1,32 @@
+{{/*
+	Shared gallery template, selected via `layout: gallery` front matter
+	(Hugo then resolves to this file: layouts/_default/gallery.html).
+	Renders a page bundle's image resources as a caption grid. Reused
+	across masten/second-hand/fotografier, and (in later phases)
+	cina/fotoalbum, ivan/bilder, ivan/till-marita, ivan-old/album.
+
+	Per-image captions come from the bundle's `resources:` front matter
+	block (title/params.caption) — see any generated fotografier entry
+	for the shape. Width/height are read off the resource itself
+	(cheap, cached) rather than trusted from scraped legacy HTML.
+*/}}
+{{ define "main" }}
+<article class="gallery-page">
+	<h1>{{ .Title }}</h1>
+	{{ .Content }}
+	{{ $images := .Resources.ByType "image" }}
+	{{ $pageTitle := .Title }}
+	{{ if $images }}
+	<ul class="gallery">
+		{{ range $images }}
+		<li>
+			<figure>
+				<img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" alt="{{ with .Params.caption }}{{ . }}{{ else }}{{ $pageTitle }}{{ end }}">
+				{{ with .Params.caption }}<figcaption>{{ . }}</figcaption>{{ end }}
+			</figure>
+		</li>
+		{{ end }}
+	</ul>
+	{{ end }}
+</article>
+{{ end }}

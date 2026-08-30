@@ -3,4 +3,24 @@
 	<h1>{{ .Title }}</h1>
 	{{ .Content }}
 </article>
+{{/*
+	Prev/next pager for dated leaf pages that share a parent section with
+	other dated siblings (e.g. masten/revideringslista/<date>/,
+	second-hand/fotografier/<date>/). Generic on purpose: any future
+	dated-entry collection gets this for free, nothing masten-specific
+	is hardcoded here.
+*/}}
+{{ with .Parent }}
+	{{ $siblings := .RegularPages.ByDate }}
+	{{ if and (not $.Date.IsZero) (gt (len $siblings) 1) }}
+		{{ $cur := -1 }}
+		{{ range $i, $p := $siblings }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $cur = $i }}{{ end }}{{ end }}
+		{{ if ge $cur 0 }}
+		<nav class="pager">
+			{{ if gt $cur 0 }}{{ with index $siblings (sub $cur 1) }}<a class="pager-prev" href="{{ .RelPermalink }}">&laquo; {{ .Title }}</a>{{ end }}{{ end }}
+			{{ if lt $cur (sub (len $siblings) 1) }}{{ with index $siblings (add $cur 1) }}<a class="pager-next" href="{{ .RelPermalink }}">{{ .Title }} &raquo;</a>{{ end }}{{ end }}
+		</nav>
+		{{ end }}
+	{{ end }}
+{{ end }}
 {{ end }}
