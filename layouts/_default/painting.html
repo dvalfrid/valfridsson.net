@@ -1,0 +1,37 @@
+{{/*
+	Single-image content type for cina's paintings (aktuella-tavlor,
+	tidigare-produktion), selected via `layout: painting` front matter
+	(same mechanism as `layout: gallery` selecting gallery.html).
+
+	Each bundle has exactly one image resource. Prefers the best-effort
+	structured params (motif/size/owner/medium) extracted from the
+	legacy caption when present; falls back to the raw `caption` front
+	matter as prose when the caption didn't cleanly match the
+	Motiv/Storlek[/Ägare] pattern (see the caption-hybrid decision in
+	the migration plan) -- never both, so nothing renders twice.
+*/}}
+{{ define "main" }}
+<article class="painting-page">
+	<h1>{{ .Title }}</h1>
+	{{ $images := .Resources.ByType "image" }}
+	{{ with $images }}
+	{{ with index . 0 }}
+	<figure class="painting-figure">
+		<img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" alt="{{ $.Title }}">
+	</figure>
+	{{ end }}
+	{{ end }}
+	{{ if or .Params.motif .Params.size .Params.owner .Params.medium }}
+	<dl class="painting-meta">
+		{{ with .Params.motif }}<dt>Motiv</dt><dd>{{ . }}</dd>{{ end }}
+		{{ with .Params.size }}<dt>Storlek</dt><dd>{{ . }}</dd>{{ end }}
+		{{ with .Params.owner }}<dt>Ägare</dt><dd>{{ . }}</dd>{{ end }}
+		{{ with .Params.medium }}<dt>Teknik</dt><dd>{{ . }}</dd>{{ end }}
+	</dl>
+	{{ else }}
+	{{ with .Params.caption }}
+	{{ range split . "\n\n" }}<p class="painting-caption">{{ . }}</p>{{ end }}
+	{{ end }}
+	{{ end }}
+</article>
+{{ end }}

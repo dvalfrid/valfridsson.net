@@ -122,7 +122,14 @@ def find_media(media_dir: Path, stem: str) -> Path | None:
 
 
 def _yaml_scalar(value: str) -> str:
+    # Double-quoted YAML scalars can't contain a literal, unescaped
+    # newline (or backslash) -- multi-paragraph captions (e.g. cina's
+    # "Beskrivning av tavlan" outlier) need these escaped or the emitted
+    # front matter is invalid YAML. Order matters: backslashes first, so
+    # we don't double-escape the backslashes just introduced below.
+    value = value.replace("\\", "\\\\")
     value = value.replace('"', '\\"')
+    value = value.replace("\r\n", "\\n").replace("\n", "\\n")
     return f'"{value}"'
 
 
@@ -138,10 +145,12 @@ class PageBundle:
     title: str
     date: str | None = None
     draft: bool = False
-    layout: str | None = None  # "gallery" to opt into layouts/_default/gallery.html
+    layout: str | None = None  # "gallery" to opt into layouts/_default/gallery.html, "painting" for single-image entries
     body: str = ""
     images: list[ImageResource] = field(default_factory=list)
     aliases: list[str] = field(default_factory=list)
+    caption: str | None = None  # page-level raw caption (painting bundles: 100% fidelity, hybrid caption decision)
+    params: dict[str, str] = field(default_factory=dict)  # page-level params, e.g. painting motif/size/owner/medium
 
 
 def write_front_matter(fm_lines: list[str], bundle: PageBundle) -> None:
@@ -155,6 +164,12 @@ def write_front_matter(fm_lines: list[str], bundle: PageBundle) -> None:
         fm_lines.append("aliases:")
         for a in bundle.aliases:
             fm_lines.append(f'  - "{a}"')
+    if bundle.caption:
+        fm_lines.append(f"caption: {_yaml_scalar(bundle.caption)}")
+    if bundle.params:
+        fm_lines.append("params:")
+        for key, value in bundle.params.items():
+            fm_lines.append(f"  {key}: {_yaml_scalar(value)}")
     if bundle.images:
         fm_lines.append("resources:")
         for img in bundle.images:

@@ -46,3 +46,33 @@
 .pager-next {
 	margin-left: auto;
 }
+
+.painting-figure {
+	margin: 0 0 var(--space-3) 0;
+}
+
+.painting-figure img {
+	max-width: 100%;
+	height: auto;
+}
+
+.painting-meta {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: var(--space-1) var(--space-2);
+	margin: 0;
+	font-family: var(--font-ui);
+	font-size: 0.9rem;
+}
+
+.painting-meta dt {
+	color: var(--color-muted);
+}
+
+.painting-meta dd {
+	margin: 0;
+}
+
+.painting-caption {
+	color: var(--color-text);
+}

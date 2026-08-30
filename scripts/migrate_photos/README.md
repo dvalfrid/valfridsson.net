@@ -27,6 +27,17 @@ python -m pip install beautifulsoup4
   folder name) and `masten/second-hand/resultat/*.html` (no date, just a
   short title -> slugified folder name). Run with `--dry-run` to preview
   without writing anything.
+- `parse_cina_captions.py` — parses `cina/aktuella-tavlor.html` and
+  `cina/tidigare-produktion.html` (one painting page bundle per
+  image+caption pair, `layout: painting`) and `cina/fotoalbum/*.html`
+  (13 flat pages + the 2 already-nested `8-utstallning-i-tyreso/`,
+  `9-utstallning-i-tyreso/` albums; one gallery bundle per page,
+  `layout: gallery`). Painting captions get a best-effort regex pass
+  extracting `params.motif`/`size`/`owner`/`medium` when they cleanly
+  match `[<medium> -] Motiv: <subject> - Storlek: <dims> cm[ - Ägare:
+  <owner>]`; the raw caption is always kept verbatim in the page-level
+  `caption` front matter field regardless (the caption-hybrid decision —
+  never force-fit, never lose data). Run with `--dry-run` to preview.
 
 ## Running
 
@@ -35,10 +46,16 @@ From the repo root:
 ```
 python scripts/migrate_photos/parse_masten_gallery.py --dry-run
 python scripts/migrate_photos/parse_masten_gallery.py
+
+python scripts/migrate_photos/parse_cina_captions.py --dry-run
+python scripts/migrate_photos/parse_cina_captions.py
 ```
 
 Output goes to `content/masten/second-hand/fotografier/<date>/` and
-`content/masten/second-hand/resultat/<slug>/`.
+`content/masten/second-hand/resultat/<slug>/`, and to
+`content/cina/aktuella-tavlor/<motif-slug-or-malning-N>/`,
+`content/cina/tidigare-produktion/<motif-slug-or-malning-N>/` and
+`content/cina/fotoalbum/<album-slug>/` respectively.
 
 ## Known exclusions (masten)
 
@@ -61,8 +78,8 @@ Output goes to `content/masten/second-hand/fotografier/<date>/` and
 
 ## Future phases
 
-This directory will grow parser modules for the other three legacy
-sites (`cina`, `ivan`, `ivan-old`) per the migration plan — each site's
+This directory will grow parser modules for the remaining two legacy
+sites (`ivan`, `ivan-old`) per the migration plan — each site's
 distinct source DOM shape gets its own `parse_*.py`, all converging on
 the same `write_bundle`/`resources:` output contract so every gallery
 across the whole project (masten, cina/fotoalbum, ivan/bilder,

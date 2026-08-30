@@ -82,6 +82,19 @@ once migration is complete and verified.
 
 ## Known migration decisions (don't reintroduce without re-checking)
 
+- cina painting captions (`content/cina/aktuella-tavlor/`,
+  `content/cina/tidigare-produktion/`) use a hybrid: the raw legacy
+  caption is always kept verbatim in a page-level `caption` front matter
+  field (100% fidelity, including the one freeform "Beskrivning av
+  tavlan" outlier), and a best-effort regex additionally populates
+  `params.motif`/`size`/`owner`/`medium` only when the caption cleanly
+  matches `[<medium> -] Motiv: <subject> - Storlek: <dims> cm[ - Ägare:
+  <owner>]` in full — never force-fit. `layouts/_default/painting.html`
+  (selected via `layout: painting`) prefers the structured params when
+  present, falling back to rendering the raw `caption` as prose
+  otherwise. Paintings whose caption doesn't parse into a clean motif
+  fall back to a generic `Målning N` title/slug rather than a
+  mis-extracted one.
 - `ivan-old/dagbok.html`/`.htm` was a confirmed duplicate of
   `content/ivan/susanne-hilliges-valfridsson/index.sv.md` — not
   migrated as content. That page carries `aliases:` for both old URLs
